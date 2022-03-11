@@ -19,16 +19,16 @@ class _HomeState extends State<Home> {
   @override
   void initState() {
     super.initState();
-    _streamController= StreamController();
-    _stream = _streamController.stream;
-    _newsApi= NewsApi();
+    _streamController= StreamController();  //initialize controller
+    _stream = _streamController.stream;  //bind the controller to the stream
+    _newsApi= NewsApi();  //initialize the NewsApi class
     getNews();
   }
 
 
   getNews()async{
-    var response = await _newsApi.getNews();
-    _streamController.add(response);
+    var response = await _newsApi.getNews();  // the returned list from getNews function
+    _streamController.add(response);  // add the whole list to the stream
   }
 
 
@@ -36,23 +36,23 @@ class _HomeState extends State<Home> {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
-        appBar: AppBar(title:Text('My News',style: TextStyle(fontSize: 30.0),),),
+        appBar: AppBar(title:const Text('My News',style: TextStyle(fontSize: 30.0),),),
         body: Center(
-          child: StreamBuilder(
+          child: StreamBuilder(  //a widget that updates itself when the stream is updated
             stream: _stream,
               builder: (context,snapshot){
-                if(snapshot.hasData) {
-                  var myData = snapshot.data as Map;
+                if(snapshot.hasData) {  //make sure that there is data inside the stream
+                  var myData = snapshot.data as Map;  //convert list to map
                   return ListView.builder(
                     itemCount: myData['articles'].length,
                     itemBuilder: (context, i) =>
                         NewsContainer(
-                          data: myData['articles'][i],
-                          index: i,
+                          i,
+                          myData['articles'][i],
                         ),
                   );
                 }
-                return CircularProgressIndicator();
+                return const CircularProgressIndicator(); //in case the data hasn't yet being added to the stream show this widget
               }
           ),
         ),
